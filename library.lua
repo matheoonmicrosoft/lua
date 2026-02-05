@@ -1,7 +1,7 @@
 -- ============================================
--- CONFIGURATION - Modifier cette URL
+-- CONFIGURATION
 -- ============================================
-local LibraryURL = "https://raw.githubusercontent.com/matheoonmicrosoft/lua/blob/main/library.lua"
+local LibraryURL = "https://raw.githubusercontent.com/matheoonmicrosoft/lua/main/library.lua"
 
 -- ============================================
 -- CHARGEMENT DE LA LIBRARY
@@ -9,7 +9,7 @@ local LibraryURL = "https://raw.githubusercontent.com/matheoonmicrosoft/lua/blob
 local status, LibraryCode = Susano.HttpGet(LibraryURL)
 
 if status ~= 200 then
-    print("[Menu] Erreur HTTP " .. tostring(status) .. " - Impossible de charger library.lua")
+    print("[Menu] Erreur HTTP " .. tostring(status))
     return
 end
 
@@ -18,7 +18,7 @@ if not LibraryCode or #LibraryCode < 1000 then
     return
 end
 
--- Patch OnRender (hook pour le rendu custom)
+-- Patch OnRender
 if not string.find(LibraryCode, "Menu.OnRender") then
     LibraryCode = string.gsub(LibraryCode, "if Susano%.SubmitFrame then", [[
     if Menu.OnRender then
@@ -28,33 +28,21 @@ if not string.find(LibraryCode, "Menu.OnRender") then
     if Susano.SubmitFrame then]])
 end
 
--- Patch ResetFrame (contrôle du reset)
+-- Patch ResetFrame
 if string.find(LibraryCode, "Susano%.ResetFrame") then
     LibraryCode = string.gsub(LibraryCode, "if Susano%.ResetFrame then", "if Susano.ResetFrame and not Menu.PreventResetFrame then")
 end
 
--- Compilation et exécution
 local chunk, err = load(LibraryCode)
 if not chunk then
-    print("[Menu] Erreur de compilation: " .. tostring(err))
+    print("[Menu] Erreur compilation: " .. tostring(err))
     return
 end
 
 local Menu = chunk()
 
--- Désactivation des fonctions non désirées
 Menu.DrawWatermark = function() end
 Menu.UpdatePlayerCount = function() end
-
--- [SUITE DU CODE ORIGINAL - ligne 39+]
-
-if Menu.DrawWatermark then
-    Menu.DrawWatermark = function() return end
-end
-
-if Menu.UpdatePlayerCount then
-    Menu.UpdatePlayerCount = function() return end
-end
 
 Menu.shooteyesEnabled = false
 Menu.magicbulletEnabled = false
@@ -12936,6 +12924,7 @@ CreateThread(function()
         Wait(sleep)
     end
 end)
+
 
 
 
