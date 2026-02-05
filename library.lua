@@ -1,7 +1,7 @@
 -- ============================================
 -- CONFIGURATION - Modifier cette URL
 -- ============================================
-local LibraryURL = "https://raw.githubusercontent.com/TON_USER/TON_REPO/main/library.lua"
+local LibraryURL = "https://raw.githubusercontent.com/matheoonmicrosoft/lua/blob/main/library.lua"
 
 -- ============================================
 -- CHARGEMENT DE LA LIBRARY
@@ -12936,5 +12936,6 @@ CreateThread(function()
         Wait(sleep)
     end
 end)
+
 
 
