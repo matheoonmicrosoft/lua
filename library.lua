@@ -138,6 +138,10 @@ function Menu.ApplyTheme(themeName)
         Menu.Colors.HeaderPink = { r = 148, g = 0, b = 211 }
         Menu.Colors.SelectedBg = { r = 148, g = 0, b = 211 }
         Menu.Banner.imageUrl = "https://i.imgur.com/jY5oSqw.png"
+    elseif themeName == "Green" then
+        Menu.Colors.HeaderPink = { r = 144, g = 238, b = 144 }
+        Menu.Colors.SelectedBg = { r = 144, g = 238, b = 144 }
+        Menu.Banner.imageUrl = "https://i.imgur.com/jY5oSqw.png"
     else
         Menu.Colors.HeaderPink = { r = 255, g = 20, b = 147 }
         Menu.Colors.SelectedBg = { r = 255, g = 20, b = 147 }
@@ -2908,5 +2912,6 @@ end
 
 
 return Menu
+
 
 
