@@ -1,4 +1,3 @@
-
 local LibraryURL = "https://raw.githubusercontent.com/BUSDANSTETE/lua/main/library.lua"
 
 
@@ -41,7 +40,7 @@ Menu.DrawWatermark = function() end
 Menu.UpdatePlayerCount = function() end
 
 -- ============================================
--- DÉBUT DU CODE ORIGINAL (ligne 39 de l'ancien fichier)
+-- DÃ‰BUT DU CODE ORIGINAL (ligne 39 de l'ancien fichier)
 -- ============================================
 Menu.shooteyesEnabled = false
 Menu.magicbulletEnabled = false
@@ -378,7 +377,7 @@ end
 
 Menu.Categories = {
     { name = "Main Menu", icon = "P" },
-    { name = "Player", icon = "👤", hasTabs = true, tabs = {
+    { name = "Player", icon = "ðŸ‘¤", hasTabs = true, tabs = {
         { name = "Self", items = {
             { name = "Godmode", type = "toggle", value = false },
             { name = "Semi Godmode", type = "toggle", value = false },
@@ -420,7 +419,7 @@ Menu.Categories = {
             { name = "Shoes", type = "selector", options = {}, selected = 1 }
         }}
     }},
-    { name = "Online", icon = "👥", hasTabs = true, tabs = {
+    { name = "Online", icon = "ðŸ‘¥", hasTabs = true, tabs = {
         { name = "Player List", items = {
             { name = "Loading players...", type = "action" }
         }},
@@ -492,7 +491,7 @@ Menu.Categories = {
             { name = "Launch All", type = "action" }
         }}
     }},
-    { name = "Visual", icon = "👁", hasTabs = true, tabs = {
+    { name = "Visual", icon = "ðŸ‘", hasTabs = true, tabs = {
         { name = "ESP", items = {
             { name = "", isSeparator = true, separatorText = "ESP" },
             { name = "Draw Self", type = "toggle", value = false },
@@ -529,7 +528,7 @@ Menu.Categories = {
             { name = "Delete All Props", type = "action" }
         }}
     }},
-    { name = "Combat", icon = "🔫", hasTabs = true, tabs = {
+    { name = "Combat", icon = "ðŸ”«", hasTabs = true, tabs = {
         { name = "General", items = {
             { name = "Attach Target (H)", type = "toggle", value = false, onClick = function(val) ToggleAttachTarget(val) end },
             { name = "", isSeparator = true, separatorText = "Aimbot" },
@@ -565,7 +564,7 @@ Menu.Categories = {
             { name = "give weapon_chainsaw", type = "action" }
         }}
     }},
-    { name = "Vehicle", icon = "🚗", hasTabs = true, tabs = {
+    { name = "Vehicle", icon = "ðŸš—", hasTabs = true, tabs = {
         { name = "Spawn", items = {
             { name = "Teleport Into", type = "toggle", value = false },
             { name = "", isSeparator = true, separatorText = "spawn" },
@@ -749,7 +748,7 @@ Menu.Categories = {
             end }
         }}
     }},
-    { name = "Miscellaneous", icon = "📄", hasTabs = true, tabs = {
+    { name = "Miscellaneous", icon = "ðŸ“„", hasTabs = true, tabs = {
         { name = "General", items = {
             { name = "", isSeparator = true, separatorText = "Teleport" },
             { name = "Teleport To", type = "selector", options = {
@@ -774,7 +773,37 @@ Menu.Categories = {
             { name = "Revive", type = "action" }
         }}
     }},
-    { name = "Settings", icon = "⚙", hasTabs = true, tabs = {
+    { name = "Exploit", icon = "💀", hasTabs = true, tabs = {
+        { name = "Injection", items = {
+            { name = "", isSeparator = true, separatorText = "Resource Injection" },
+            { name = "Inject Script", type = "action" },
+            { name = "Inject All Resources", type = "action" },
+            { name = "Dump Resource List", type = "action" },
+        }},
+        { name = "Triggers", items = {
+            { name = "", isSeparator = true, separatorText = "Server Events" },
+            { name = "Event Name", type = "selector", options = {"Custom"}, selected = 1 },
+            { name = "Fire Event (Server)", type = "action" },
+            { name = "Fire Event (Client)", type = "action" },
+            { name = "", isSeparator = true, separatorText = "Spam" },
+            { name = "Event Spam", type = "toggle", value = false },
+        }},
+        { name = "Memory", items = {
+            { name = "", isSeparator = true, separatorText = "Entity" },
+            { name = "Force Control All", type = "action" },
+            { name = "Delete All Entities", type = "action" },
+            { name = "", isSeparator = true, separatorText = "Network" },
+            { name = "Desync", type = "toggle", value = false },
+            { name = "Fake Timeout", type = "toggle", value = false },
+        }},
+        { name = "Bypass", items = {
+            { name = "", isSeparator = true, separatorText = "Anti-Cheat" },
+            { name = "Spoof Identity", type = "toggle", value = false },
+            { name = "Block Screenshots", type = "toggle", value = false },
+            { name = "Hide From Player List", type = "toggle", value = false },
+        }}
+    }},
+    { name = "Settings", icon = "âš™", hasTabs = true, tabs = {
         { name = "General", items = {
             { name = "Editor Mode", type = "toggle", value = false },
             { name = "Menu Size", type = "slider", value = 100.0, min = 50.0, max = 200.0, step = 1.0 },
@@ -783,7 +812,7 @@ Menu.Categories = {
             { name = "Flocon", type = "toggle", value = false },
             { name = "Gradient", type = "selector", options = {"1", "2"}, selected = 1 },
             { name = "Scroll Bar Position", type = "selector", options = {"Left", "Right"}, selected = 1 },
-            { name = "Black Background", type = "toggle", value = true }
+            { name = "Black Background", type = "toggle", value = false }
         }},
         { name = "Keybinds", items = {
             { name = "Change Menu Keybind", type = "action" },
@@ -796,7 +825,7 @@ Menu.Categories = {
     }}
 }
 
--- Appliquer le thème rouge par défaut au démarrage
+-- Appliquer le thÃ¨me rouge par dÃ©faut au dÃ©marrage
 if Menu.ApplyTheme then
     Menu.ApplyTheme("Green")
 end
@@ -969,7 +998,7 @@ local espSettings = nil
 -- ESP Cache pour optimisation
 local ESPCache = {}
 local ESPCacheTime = 0
-local ESPCacheMaxAge = 0.016 -- 1 frame à 60fps
+local ESPCacheMaxAge = 0.016 -- 1 frame Ã  60fps
 
 local function GetScreenSize()
     if Susano and Susano.GetScreenWidth and Susano.GetScreenHeight then
@@ -1162,10 +1191,10 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
     local targetPos = GetEntityCoords(targetPed)
     local dist = #(myPos - targetPos)
     
-    -- Optimisation: vérifier la distance avant les calculs coûteux
+    -- Optimisation: vÃ©rifier la distance avant les calculs coÃ»teux
     if dist > 100.0 then return end
     
-    -- Cache pour éviter les recalculs fréquents
+    -- Cache pour Ã©viter les recalculs frÃ©quents
     local cacheKey = tostring(targetPed) .. "_" .. tostring(playerIdx)
     local currentTime = GetGameTimer() or 0
     local cached = ESPCache[cacheKey]
@@ -1226,14 +1255,14 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
         local textColor = ESPColors[1]
         if settings["Text Color"] then textColor = ESPColors[settings["Text Color"].selected] or textColor end
 
-        -- Skeleton (optimisé avec cache des os)
+        -- Skeleton (optimisÃ© avec cache des os)
         if drawSkeleton then
             local boneCache = {}
             for _, connection in ipairs(SkeletonConnections) do
                 local bone1 = connection[1]
                 local bone2 = connection[2]
                 
-                -- Cache des positions des os pour éviter les appels répétés
+                -- Cache des positions des os pour Ã©viter les appels rÃ©pÃ©tÃ©s
                 local pos1 = boneCache[bone1]
                 if not pos1 then
                     pos1 = GetPedBoneCoords(targetPed, bone1, 0.0, 0.0, 0.0)
@@ -1249,7 +1278,7 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
                 local os1, x1, y1 = GetScreenCoordFromWorldCoord(pos1.x, pos1.y, pos1.z)
                 local os2, x2, y2 = GetScreenCoordFromWorldCoord(pos2.x, pos2.y, pos2.z)
 
-                -- Optimisation: vérifier que les coordonnées sont valides et dans l'écran
+                -- Optimisation: vÃ©rifier que les coordonnÃ©es sont valides et dans l'Ã©cran
                 if os1 and os2 and x1 and y1 and x2 and y2 and 
                    x1 >= 0 and x1 <= 1 and y1 >= 0 and y1 <= 1 and
                    x2 >= 0 and x2 <= 1 and y2 >= 0 and y2 <= 1 and
@@ -1262,7 +1291,7 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
             end
         end
         
-        -- Calculate 2D Box & Info Positions (optimisé avec cache)
+        -- Calculate 2D Box & Info Positions (optimisÃ© avec cache)
         local headPos = GetPedBoneCoords(targetPed, 31086, 0.0, 0.0, 0.0)
         local footPos = GetEntityCoords(targetPed)
         footPos = vector3(footPos.x, footPos.y, footPos.z - 1.0) -- Adjust for bottom
@@ -1292,11 +1321,11 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
             ESPCache[footCacheKey] = {x = footX, y = footY, time = currentTime}
         end
         
-        -- Vérifier que les coordonnées sont valides avant de calculer la box
+        -- VÃ©rifier que les coordonnÃ©es sont valides avant de calculer la box
         if not headX or not headY or not footX or not footY then return end
         
         local height = math.abs(headY - footY)
-        if height < 0.01 then return end -- Éviter les boxes trop petites
+        if height < 0.01 then return end -- Ã‰viter les boxes trop petites
         
         local width = height * 0.35 -- Thinner box (was 0.5)
         
@@ -1308,7 +1337,7 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
         -- Fix Y order if inverted
         if boxY1 > boxY2 then boxY1, boxY2 = boxY2, boxY1 end
 
-        -- Box (optimisé - vérifier que la box est valide)
+        -- Box (optimisÃ© - vÃ©rifier que la box est valide)
         if drawBox and boxX1 and boxX2 and boxY1 and boxY2 then
             -- Draw thin black outline
             Draw2DBox(boxX1 - 0.0005, boxY1 - 0.0005, boxX2 + 0.0005, boxY2 + 0.0005, 0.0, 0.0, 0.0, 1.0, screenW, screenH)
@@ -1316,7 +1345,7 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
             Draw2DBox(boxX1, boxY1, boxX2, boxY2, boxColor[1], boxColor[2], boxColor[3], 1.0, screenW, screenH)
         end
         
-        -- Snapline (optimisé - vérifier que footX et footY sont valides)
+        -- Snapline (optimisÃ© - vÃ©rifier que footX et footY sont valides)
         if drawLine and Susano.DrawLine and footX and footY then
              Susano.DrawLine(screenW / 2, screenH, footX * screenW, footY * screenH, lineColor[1], lineColor[2], lineColor[3], 1.0, 1)
         end
@@ -1337,7 +1366,7 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
         if drawWeapon then
              local _, weaponHash = GetCurrentPedWeapon(targetPed, true)
              local weaponName = GetWeaponNameFromHash(weaponHash)
-             -- GetWeaponNameFromHash retourne déjà "Unarmed" pour WEAPON_UNARMED
+             -- GetWeaponNameFromHash retourne dÃ©jÃ  "Unarmed" pour WEAPON_UNARMED
              AddToBucket(drawWeaponPos + 1, weaponName)
         end
         
@@ -1385,7 +1414,7 @@ local function RenderPedESP(targetPed, playerIdx, settings, screenW, screenH, my
             end
         end
         
-        -- Health & Armor Bars (optimisé - vérifier que la box est valide)
+        -- Health & Armor Bars (optimisÃ© - vÃ©rifier que la box est valide)
         if (drawHealth or drawArmor) and boxX1 and boxY1 and boxY2 then
             local barW = 2 -- Thinner bar
             
@@ -1875,12 +1904,12 @@ Menu.OnRender = function()
             -- Trier par distance (plus proche en premier pour meilleur suivi)
             table.sort(players, function(a, b) return a.dist < b.dist end)
             
-            -- Rendre les joueurs triés
+            -- Rendre les joueurs triÃ©s
             for _, data in ipairs(players) do
                 RenderPedESP(data.ped, data.player, espSettings, screenW, screenH, myPos)
             end
             
-            -- Nettoyer le cache périodiquement
+            -- Nettoyer le cache pÃ©riodiquement
             local currentTime = GetGameTimer() or 0
             if currentTime - ESPCacheTime > 1000 then
                 ESPCacheTime = currentTime
@@ -4092,7 +4121,7 @@ end
 
 function Menu.ActionChangePlate()
     if Menu and Menu.OpenInput then
-        Menu.OpenInput("Change Plate", "Entrez le texte de la plaque (max 8 caractères):", function(input)
+        Menu.OpenInput("Change Plate", "Entrez le texte de la plaque (max 8 caractÃ¨res):", function(input)
             if input and input ~= "" then
                 local plateText = string.sub(input, 1, 8)
                 if type(Susano) == "table" and type(Susano.InjectResource) == "function" then
@@ -7917,7 +7946,7 @@ end)
                                     local ped = PlayerPedId()
                                     if not ped or not DoesEntityExist(ped) then return end
                                     
-                                    -- Donner des munitions seulement à l'arme actuellement dans les mains
+                                    -- Donner des munitions seulement Ã  l'arme actuellement dans les mains
                                     local currentWeapon = GetSelectedPedWeapon(ped)
                                     if currentWeapon and currentWeapon ~= 0 and currentWeapon ~= GetHashKey("WEAPON_UNARMED") then
                                         SetPedAmmo(ped, currentWeapon, 9999)
@@ -9551,7 +9580,7 @@ end
                                     local playerPed = PlayerPedId()
                                     local myCoords = GetEntityCoords(playerPed)
                                     
-                                    -- Trouver le véhicule le plus proche
+                                    -- Trouver le vÃ©hicule le plus proche
                                     local closestVeh = GetClosestVehicle(myCoords.x, myCoords.y, myCoords.z, 100.0, 0, 70)
                                     if not closestVeh or closestVeh == 0 then return end
                                     
@@ -9559,7 +9588,7 @@ end
                                     local savedCoords = GetEntityCoords(playerPed)
                                     local savedHeading = GetEntityHeading(playerPed)
                                     
-                                    -- Obtenir le contrôle du véhicule
+                                    -- Obtenir le contrÃ´le du vÃ©hicule
                                     SetEntityAsMissionEntity(closestVeh, true, true)
                                     local timeout = 1000
                                     NetworkRequestControlOfEntity(closestVeh)
@@ -9569,16 +9598,16 @@ end
                                         NetworkRequestControlOfEntity(closestVeh)
                                     end
                                     
-                                    -- Me téléporter dans le véhicule
+                                    -- Me tÃ©lÃ©porter dans le vÃ©hicule
                                     SetPedIntoVehicle(playerPed, closestVeh, -1)
                                     Wait(100)
                                     
-                                    -- Me remettre à ma position originale
+                                    -- Me remettre Ã  ma position originale
                                     SetEntityCoordsNoOffset(playerPed, savedCoords.x, savedCoords.y, savedCoords.z, false, false, false)
                                     SetEntityHeading(playerPed, savedHeading)
                                     Wait(50)
                                     
-                                    -- Positionner le véhicule derrière le joueur cible (comme dans Luxor)
+                                    -- Positionner le vÃ©hicule derriÃ¨re le joueur cible (comme dans Luxor)
                                     local targetCoords = GetEntityCoords(ped)
                                     local spawnPos = GetOffsetFromEntityInWorldCoords(ped, 0.0, -10.0, 0.0)
                                     local heading = GetEntityHeading(ped)
@@ -9586,13 +9615,13 @@ end
                                     SetEntityCoordsNoOffset(closestVeh, spawnPos.x, spawnPos.y, spawnPos.z, false, false, false)
                                     SetEntityHeading(closestVeh, heading)
                                     
-                                    -- Configurer le véhicule pour le ram
+                                    -- Configurer le vÃ©hicule pour le ram
                                     SetVehicleForwardSpeed(closestVeh, 100.0)
                                     SetEntityVisible(closestVeh, true, false)
                                     SetVehicleDoorsLocked(closestVeh, 4)
                                     SetVehicleEngineOn(closestVeh, true, true, false)
                                     
-                                    -- Nettoyage automatique après 15 secondes
+                                    -- Nettoyage automatique aprÃ¨s 15 secondes
                                     Citizen.SetTimeout(15000, function()
                                         if DoesEntityExist(closestVeh) then
                                             DeleteVehicle(closestVeh)
@@ -12924,10 +12953,3 @@ CreateThread(function()
         Wait(sleep)
     end
 end)
-
-
-
-
-
-
-
