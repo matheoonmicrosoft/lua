@@ -122,25 +122,21 @@ function Menu.LoadBannerTexture(url)
 end
 
 Menu.Colors = {
-    HeaderPink = { r = 144, g = 238, b = 144 },
-    SelectedBg = { r = 144, g = 238, b = 144 },
+    HeaderPink = { r = 148, g = 0, b = 211 },
+    SelectedBg = { r = 148, g = 0, b = 211 },
     TextWhite = { r = 255, g = 255, b = 255 },
     BackgroundDark = { r = 0, g = 0, b = 0 },
     FooterBlack = { r = 0, g = 0, b = 0 }
 }
 
 function Menu.ApplyTheme(themeName)
-    if themeName == "Green" then
-        Menu.Colors.HeaderPink = { r = 144, g = 238, b = 144 }
-        Menu.Colors.SelectedBg = { r = 144, g = 238, b = 144 }
+    if themeName == "Red" then
+        Menu.Colors.HeaderPink = { r = 255, g = 0, b = 0 }
+        Menu.Colors.SelectedBg = { r = 255, g = 0, b = 0 }
         Menu.Banner.imageUrl = "https://i.imgur.com/jY5oSqw.png"
     elseif themeName == "Purple" then
         Menu.Colors.HeaderPink = { r = 148, g = 0, b = 211 }
         Menu.Colors.SelectedBg = { r = 148, g = 0, b = 211 }
-        Menu.Banner.imageUrl = "https://i.imgur.com/jY5oSqw.png"
-    elseif themeName == "Red" then 
-        Menu.Colors.HeaderPink = { r = 255, g = 0, b = 0 }
-        Menu.Colors.SelectedBg = { r = 255, g = 0, b = 0 }
         Menu.Banner.imageUrl = "https://i.imgur.com/jY5oSqw.png"
     else
         Menu.Colors.HeaderPink = { r = 255, g = 20, b = 147 }
@@ -2912,5 +2908,4 @@ end
 
 
 return Menu
-
 
