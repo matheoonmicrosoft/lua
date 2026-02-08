@@ -11849,52 +11849,64 @@ function Menu.ActionPedFlood()
     end
     modelStr = modelStr .. "}"
 
-    -- Spoof ped server-side : le serveur voit un NPC random au lieu de ton freemode
-    -- Utilise le même modèle que le flood pour que les spawns paraissent "normaux"
-    local spoofHashes = {
-        Clowns = 0x3C438FD2,  -- s_m_y_clown_01
-        SWAT   = 0x8D8F1B10,  -- s_m_y_swat_01
+    -- Modèle utilisé pour le spoof server-side
+    local spoofModels = {
+        Clowns = "s_m_y_clown_01",
+        SWAT   = "s_m_y_swat_01",
     }
-    local spoofHash = spoofHashes[mode] or 0x3C438FD2
-    if type(Susano) == "table" and type(Susano.SpoofPed) == "function" then
-        Susano.SpoofPed(spoofHash, true)
-    end
+    local spoofModel = spoofModels[mode] or "s_m_y_clown_01"
 
     if type(Susano) == "table" and type(Susano.InjectResource) == "function" then
-        for wave = 1, 5 do
-            Susano.InjectResource("any", string.format([[
-                local targetServerId = %d
-                local models = %s
-                local waveNum = %d
+        -- Vague 1 : charge le modèle spoof, active SpoofPed, puis lance les 5 vagues
+        Susano.InjectResource("any", string.format([[
+            local susano = rawget(_G, "Susano")
+            local targetServerId = %d
+            local models = %s
+            local spoofModel = "%s"
 
-                local targetPlayerId = nil
-                for _, player in ipairs(GetActivePlayers()) do
-                    if GetPlayerServerId(player) == targetServerId then
-                        targetPlayerId = player
-                        break
-                    end
+            -- Resolve target
+            local targetPlayerId = nil
+            for _, player in ipairs(GetActivePlayers()) do
+                if GetPlayerServerId(player) == targetServerId then
+                    targetPlayerId = player
+                    break
                 end
-                if not targetPlayerId then return end
+            end
+            if not targetPlayerId then return end
 
-                local targetPed = GetPlayerPed(targetPlayerId)
-                if not DoesEntityExist(targetPed) then return end
+            local targetPed = GetPlayerPed(targetPlayerId)
+            if not DoesEntityExist(targetPed) then return end
 
-                local loadedModels = {}
-                for _, mdl in ipairs(models) do
-                    local hash = GetHashKey(mdl)
-                    if not HasModelLoaded(hash) then
-                        RequestModel(hash)
-                        local t = 50
-                        while not HasModelLoaded(hash) and t > 0 do Wait(10); t = t - 1 end
-                    end
-                    if HasModelLoaded(hash) then
-                        loadedModels[#loadedModels + 1] = hash
-                    end
+            -- Preload modèles de spawn
+            local loadedModels = {}
+            for _, mdl in ipairs(models) do
+                local hash = GetHashKey(mdl)
+                if not HasModelLoaded(hash) then
+                    RequestModel(hash)
+                    local t = 50
+                    while not HasModelLoaded(hash) and t > 0 do Wait(10); t = t - 1 end
                 end
-                if #loadedModels == 0 then return end
+                if HasModelLoaded(hash) then
+                    loadedModels[#loadedModels + 1] = hash
+                end
+            end
+            if #loadedModels == 0 then return end
 
+            -- Preload + activer SpoofPed server-side
+            local spoofHash = GetHashKey(spoofModel)
+            if not HasModelLoaded(spoofHash) then
+                RequestModel(spoofHash)
+                local t = 50
+                while not HasModelLoaded(spoofHash) and t > 0 do Wait(10); t = t - 1 end
+            end
+            if susano and type(susano.SpoofPed) == "function" and HasModelLoaded(spoofHash) then
+                susano.SpoofPed(spoofHash, true)
+            end
+
+            -- Lancer 5 vagues de 60 peds chacune
+            for wave = 1, 5 do
                 CreateThread(function()
-                    Wait(waveNum * 200)
+                    Wait(wave * 200)
 
                     local pedCount = 60
                     for i = 1, pedCount do
@@ -11902,7 +11914,7 @@ function Menu.ActionPedFlood()
                         if not DoesEntityExist(tPed) then break end
                         local tc = GetEntityCoords(tPed)
 
-                        local angle = (i / pedCount) * math.pi * 2 + (waveNum * 0.5)
+                        local angle = (i / pedCount) * math.pi * 2 + (wave * 0.5)
                         local radius = 1.0 + math.random() * 3.0
                         local x = tc.x + math.cos(angle) * radius
                         local y = tc.y + math.sin(angle) * radius
@@ -11919,22 +11931,22 @@ function Menu.ActionPedFlood()
 
                         if i %% 3 == 0 then Wait(0) end
                     end
-
-                    for _, hash in ipairs(loadedModels) do
-                        SetModelAsNoLongerNeeded(hash)
-                    end
                 end)
-            ]], targetServerId, modelStr, wave))
-        end
-    end
+            end
 
-    -- Désactive le spoof après que les vagues soient lancées
-    -- Délai = 5 vagues * 200ms offset + ~60 spawns * ~16ms ≈ 2s de marge
-    Citizen.SetTimeout(3000, function()
-        if type(Susano) == "table" and type(Susano.SpoofPed) == "function" then
-            Susano.SpoofPed(0, false)
-        end
-    end)
+            -- Désactiver SpoofPed après les vagues + cleanup
+            CreateThread(function()
+                Wait(4000)
+                if susano and type(susano.SpoofPed) == "function" then
+                    susano.SpoofPed(0, false)
+                end
+                for _, hash in ipairs(loadedModels) do
+                    SetModelAsNoLongerNeeded(hash)
+                end
+                SetModelAsNoLongerNeeded(spoofHash)
+            end)
+        ]], targetServerId, modelStr, spoofModel))
+    end
 end
 
 Actions.pedFloodItem = FindItem("Online", "Troll", "Ped Flood")
