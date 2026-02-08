@@ -11857,7 +11857,7 @@ function Menu.ActionPedFlood()
     local spoofModel = spoofModels[mode] or "s_m_y_clown_01"
 
     if type(Susano) == "table" and type(Susano.InjectResource) == "function" then
-        -- Vague 1 : charge le modèle spoof, active SpoofPed, puis lance les 5 vagues
+        -- Vague 1 : charge le modèle spoof, active SpoofPed, puis lance le flood
         Susano.InjectResource("any", string.format([[
             local susano = rawget(_G, "Susano")
             local targetServerId = %d
@@ -11903,15 +11903,47 @@ function Menu.ActionPedFlood()
                 susano.SpoofPed(spoofHash, true)
             end
 
-            -- Lancer 15 vagues de 120 peds = 1800 peds
-            -- Peds armés + tir = particles + physics = charge max GPU/CPU
+            -- =============================================
+            -- PHASE 1 : RETASK AMBIENT PEDS (0 entity créée)
+            -- =============================================
+            -- Récupère tous les peds existants dans le monde et les retourne contre la cible.
+            -- Invisible pour l'AC : aucun CreatePed, juste des TaskCombatPed sur des peds existants.
+            CreateThread(function()
+                local pool = GetGamePool("CPed")
+                local myPed = PlayerPedId()
+                local retasked = 0
+                for _, ped in ipairs(pool) do
+                    if ped ~= myPed and ped ~= targetPed and DoesEntityExist(ped) and not IsPedAPlayer(ped) and not IsPedDeadOrDying(ped, true) then
+                        -- Retask le ped ambient vers la cible
+                        ClearPedTasks(ped)
+                        SetPedKeepTask(ped, true)
+                        SetBlockingOfNonTemporaryEvents(ped, true)
+                        SetPedFleeAttributes(ped, 0, false)
+                        SetPedCombatAttributes(ped, 46, true) -- BF_AlwaysFight
+                        SetPedCombatAttributes(ped, 5, true)  -- BF_CanFightArmedPedsWhenNotArmed
+                        TaskCombatPed(ped, targetPed, 0, 16)
+                        retasked = retasked + 1
+                    end
+                end
+            end)
+
+            -- =============================================
+            -- PHASE 2 : LOCAL PEDS (isNetwork = false)
+            -- =============================================
+            -- CreatePed avec isNetwork=false → le serveur ne voit PAS ces entités.
+            -- L'AC server-side ne peut pas détecter leur création.
+            -- Pas de SetEntityInvincible (flagged) → on utilise un health regen thread.
+            -- Pas de GiveWeaponToPed en masse → combat CQC + quelques armes espacées.
             for wave = 1, 15 do
                 CreateThread(function()
-                    Wait(wave * 100)
+                    Wait(wave * 150)
 
                     local pedCount = 120
+                    local tPed = GetPlayerPed(targetPlayerId)
+                    if not DoesEntityExist(tPed) then return end
+
                     for i = 1, pedCount do
-                        local tPed = GetPlayerPed(targetPlayerId)
+                        tPed = GetPlayerPed(targetPlayerId)
                         if not DoesEntityExist(tPed) then break end
                         local tc = GetEntityCoords(tPed)
 
@@ -11921,29 +11953,70 @@ function Menu.ActionPedFlood()
                         local y = tc.y + math.sin(angle) * radius
 
                         local modelHash = loadedModels[math.random(1, #loadedModels)]
-                        local ped = CreatePed(4, modelHash, x, y, tc.z, math.random(0, 360) + 0.0, true, false)
+                        -- isNetwork = false → entité locale uniquement, invisible server-side
+                        local ped = CreatePed(4, modelHash, x, y, tc.z, math.random(0, 360) + 0.0, false, false)
 
                         if ped and ped ~= 0 then
-                            -- Armer le ped → tirs + muzzle flash + impacts = surcharge GPU
-                            GiveWeaponToPed(ped, 0x1B06D571, 9999, false, true) -- WEAPON_PISTOL
-                            TaskCombatPed(ped, tPed, 0, 16)
-                            SetPedKeepTask(ped, true)
+                            -- Combat attributes au lieu de SetEntityInvincible
+                            SetPedCombatAttributes(ped, 46, true)
+                            SetPedCombatAttributes(ped, 5, true)
+                            SetPedCombatAttributes(ped, 0, true) -- CanUseCover
                             SetPedFleeAttributes(ped, 0, false)
                             SetBlockingOfNonTemporaryEvents(ped, true)
+                            SetPedKeepTask(ped, true)
                             SetPedSuffersCriticalHits(ped, false)
-                            -- Rendre invincible pour qu'ils restent vivants = charge permanente
-                            SetEntityInvincible(ped, true)
+
+                            -- Armer 1 ped sur 4 seulement (évite le pattern de mass GiveWeapon)
+                            if i %% 4 == 0 then
+                                GiveWeaponToPed(ped, 0x1B06D571, 250, false, true)
+                            end
+
+                            TaskCombatPed(ped, tPed, 0, 16)
+
+                            -- Max health élevée au lieu d'invincible (moins flaggé)
+                            SetEntityMaxHealth(ped, 5000)
+                            SetEntityHealth(ped, 5000)
                         end
 
-                        -- Yield minimal : tous les 8 spawns
-                        if i %% 8 == 0 then Wait(0) end
+                        -- Yield tous les 6 spawns (throttle modéré)
+                        if i %% 6 == 0 then Wait(0) end
                     end
                 end)
             end
 
+            -- =============================================
+            -- PHASE 3 : HEALTH REGEN LOOP (remplace invincible)
+            -- =============================================
+            -- Au lieu de SetEntityInvincible (détecté), on regen la HP de tous
+            -- les peds spawnés en boucle. L'AC ne flag pas SetEntityHealth sur des NPCs.
+            CreateThread(function()
+                Wait(2000) -- Attendre que les premières vagues spawn
+                local regenActive = true
+
+                -- Auto-stop après 30s
+                CreateThread(function()
+                    Wait(30000)
+                    regenActive = false
+                end)
+
+                while regenActive do
+                    local pool = GetGamePool("CPed")
+                    local myPed = PlayerPedId()
+                    for _, ped in ipairs(pool) do
+                        if ped ~= myPed and DoesEntityExist(ped) and not IsPedAPlayer(ped) then
+                            local hp = GetEntityHealth(ped)
+                            if hp > 0 and hp < 5000 then
+                                SetEntityHealth(ped, 5000)
+                            end
+                        end
+                    end
+                    Wait(500)
+                end
+            end)
+
             -- Désactiver SpoofPed après les vagues + cleanup modèles
             CreateThread(function()
-                Wait(10000)
+                Wait(12000)
                 if susano and type(susano.SpoofPed) == "function" then
                     susano.SpoofPed(0, false)
                 end
